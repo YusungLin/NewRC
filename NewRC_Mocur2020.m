@@ -115,183 +115,57 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-[filename pathname]=uigetfile({'*.txt'},'File Selector');
-global fullpathname;
-fullpathname=strcat(pathname,filename);
-fr=fopen(fullpathname,'r');
-[name contype]=textread(fullpathname,'%s %s',1,'emptyvalue', NaN);
-handles.legend_list = [handles.legend_list;string(name)];
-guidata(hObject,handles);
-string0='NaN';
-string1='MANDER';
-string2='HUNG';
-concretetype=0;
-if strcmp(contype,string0)==1
-    concretetype=0;
-elseif strcmp(contype,string1)==1
-    concretetype=1;
-elseif strcmp(contype,string2)==1
-    concretetype=2;
-end
-if concretetype==0||concretetype==1
-    [fc Ec K ecu ft]=textread(fullpathname,'%f %f %f %f %f',1,'headerlines',1,'emptyvalue', NaN);
-elseif concretetype==2
-    [SIGtc SIGtp EPSILONtc EPSILONtp EPSILONtu SIGcp SIGcu EPSILONcp EPSILONcu]=textread(fullpathname,'%f %f %f %f %f %f %f %f %f',1,'headerlines',1);
-    fc=SIGcp;ecu=EPSILONcu;%%%%%%%%
-end
-[h b cover P stnum]=textread(fullpathname,'%f %f %f %f %d',1 ,'headerlines',2);
-[fy fu Es esh esu power fcr]=textread(fullpathname,'%f %f %f %f %f %f %f',stnum,'headerlines',3,'emptyvalue', NaN);
-
-if concretetype==0||concretetype==1
-    if isnan(Ec)
-        Ec=15000*sqrt(fc);
-    end
-    if isnan(K)
-        K=1;
-    end
-    if isnan(ecu)
-        ecu=0.004;
-    end
-    if fc>1500||fc<100
-        hm=msgbox(['fc¿é¤J¿ù»~'],'¿é¤J¿ù»~','error');
-        set(hm,'color','w');
-        waitfor(hm);
-        close(gcf);
-    end
-    if K<1
-        hm=msgbox(['K¿é¤J¿ù»~'],'¿é¤J¿ù»~','error');
-        set(hm,'color','w');
-        waitfor(hm);
-        close(gcf);
-    end
-end
-
-for num=1:1:stnum
-    if isnan(fcr(num))
-        fcr(num)=fu(num)+100;
-    end
-end
-
-if P>0.99
-    hm=msgbox(['P¿é¤J¿ù»~'],'¿é¤J¿ù»~','error');
-    set(hm,'color','w');
-    waitfor(hm);
-    close(gcf);
-end
-
-
-for num=1:1:stnum
-    if fy(num)>10000||fy(num)<1000
-        hm=msgbox(['fy¿é¤J¿ù»~'],'¿é¤J¿ù»~','error');
-        set(hm,'color','w');
-        waitfor(hm);
-        close(gcf);
-    end
-    if fu(num)<fy(num)
-        hm=msgbox(['fu¿é¤J¿ù»~'],'¿é¤J¿ù»~','error');
-        set(hm,'color','w');
-        waitfor(hm);
-        close(gcf);
-    end
-    if esh(num)<(fy(num)/Es(num))
-        hm=msgbox(['esh¿é¤J¿ù»~'],'¿é¤J¿ù»~','error');
-        set(hm,'color','w');
-        waitfor(hm);
-        close(gcf);
-    end
-    if power(num)<1
-        hm=msgbox(['power¿é¤J¿ù»~'],'¿é¤J¿ù»~','error');
-        set(hm,'color','w');
-        waitfor(hm);
-        close(gcf);
-    end
-end
-
-
-
-for num=1:1:(stnum+3)
-    discard=fgetl(fr);
-end
-%Åª¨ú«áÄòÀÉ®×
-n=1;
-while ~feof(fr)
-    l = fgetl(fr);
-    w=str2num(l);
-    if ~isnumeric(w)
-        break;
-    end
-    count=0;kt=1;
-    while kt<=length(w)&& w(kt)>0
-        s(n,kt)=w(kt);
-        count=count+1;
-        kt=kt+1;
-    end
-    number(n)=count;
-    n=n+1;
-end
-mat=size(s);
-
-
-for n=1:1:mat(1)
-    if s(n,1)>h
-        hm=msgbox(['di¿é¤J¿ù»~'],'¿é¤J¿ù»~','error');
-        set(hm,'color','w');
-        waitfor(hm);
-        close(gcf);
-    end
-    if s(n,2)>10000||s(n,2)<1000
-        hm=msgbox(['fy¿é¤J¿ù»~'],'¿é¤J¿ù»~','error');
-        set(hm,'color','w');
-        waitfor(hm);
-        close(gcf);
-    end
+	param = refactor_read_data(handles);
     
-    for q=3:1:mat(2)
-        re=rem(s(n,q),1);
-        if s(n,q)>=19||s(n,q)<0||s(n,q)==1||s(n,q)==2||s(n,q)==13||s(n,q)==15||s(n,q)==17||re~=0   %re~=0  ¥Nªí¿é¤J«D¾ã¼Æ
-            hm=msgbox(['¿ûµ¬¸¹¼Æ¿é¤J¿ù»~'],'¿é¤J¿ù»~','error');
-            set(hm,'color','w');
-            waitfor(hm);
-            close(gcf);
-        end
-    end
-end
+    % Åª¨ú°Ñ¼Æ
+    % unpack all the parameters (temparary)
+    handles = param.handles;
+    
+    pathname = param.pathname;
+    filename = param.filename;
+    name = param.name;
+    concretetype = param.concretetype;
+        
+    h = param.h;
+    b = param.b;
+    cover = param.cover;
+    P = param.P;
+    stnum = param.stnum;
+    
+    fy = param.fy;
+    fu = param.fu;
+    Es = param.Es;
+    esh = param.esh;
+    esu = param.esu;
+    power = param.power;
+    fcr = param.fcr;
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-for i=1:1:mat(1)
-    for j=3:1:mat(2)
-        ss(i,j-2)=s(i,j);
+    s = param.s;
+    ss = param.ss;
+    number = param.number;
+    mat = param.mat;
+    sstyp = param.sstyp;
+    ssrow = param.ssrow;
+    
+    if concretetype == 0 || concretetype == 1
+        mander = param.mander;
+        fc = mander.fc;
+        Ec = mander.Ec;
+        K = mander.K;
+        ecu = mander.ecu;
+        ft = mander.ft;
+    elseif concretetype == 2
+        hung = param.hung;
+        SIGtc = hung.SIGtc;
+        SIGtp = hung.SIGtp;
+        EPSILONtc = hung.EPSILONtc;
+        EPSILONtp = hung.EPSILONtp;
+        EPSILONtu = hung.EPSILONtu;
+        SIGcp = hung.SIGcp;
+        SIGcu = hung.SIGcu;
+        EPSILONcp = hung.EPSILONcp;
+        EPSILONcu = hung.EPSILONcu;
     end
-end
-
-g=1;
-for n1=1:1:mat(1)
-    for n2=1:1:mat(2)-2
-        if ss(n1,n2)>0
-            for num=1:1:stnum
-                if s(n1,2)==fy(num)
-                    sstyp(1,g)=num;
-                    g=g+1;
-                end
-            end
-        elseif ss(n1,n2)==0
-            sstyp(1,g)=0;
-            g=g+1;
-        end
-    end
-end
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-p=1;
-for i=1:1:mat(1)
-    for j=1:1:mat(2)-2
-        ssrow(1,p)=[ss(i,j)];
-        p=p+1;
-    end
-end
-ssrow(find(ssrow==0))=[];
-sstyp(find(sstyp==0))=[];
 
 
 p=1;
