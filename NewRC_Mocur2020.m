@@ -166,66 +166,18 @@ function pushbutton1_Callback(hObject, eventdata, handles)
         EPSILONcp = hung.EPSILONcp;
         EPSILONcu = hung.EPSILONcu;
     end
-
-
-p=1;
-for i=1:1:mat(1)
-    areaAs(i)=0;j=1;
-    for j=1:1:(mat(2)-2)
-        switch ss(i,j)
-            case 0
-                As=0;
-            case 3
-                As=0.71;
-            case 4
-                As=1.27;
-            case 5
-                As=1.99;
-            case 6
-                As=2.87;
-            case 7
-                As=3.87;
-            case 8
-                As=5.07;
-            case 9
-                As=6.47;
-            case 10
-                As=8.14;
-            case 11
-                As=10.07;
-            case 12
-                As=12.19;
-            case 14
-                As=14.52;
-            case 16
-                As=19.79;
-            case 18
-                As=25.79;
-        end
-        sAs(i,j)=As;
-        if As>0
-            ssAs(1,p)=As;
-            p=p+1;
-        end
-        areaAs(i)=areaAs(i)+sAs(i,j);
-        As=0;
-    end
-end
-steelnum=(p-1);
-totalAs=0;dtmax=1;
-for n=1:1:mat(1)
-    d(n)=s(n,1);
-    totalAs=totalAs+areaAs(n);
-    if d(n)>dtmax
-        dtmax=d(n);
-    end
-end
-
-steelratio=roundn(totalAs/(b*h),-4);
-set(handles.text28,'String',name);
-set(handles.text4,'String',cover);
-set(handles.text6,'String',steelratio);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    steelParam = refactor_steel_conversion(param);
+    
+    % 讀取 steel_conversion 的參數
+    % unpack parameters in steel_conversion
+    handles = steelParam.handles;
+    param.handles = handles;
+    
+    ssAs = steelParam.ssAs;
+    steelnum = steelParam.steelnum;
+    totalAs = steelParam.totalAs;
+    dtmax = steelParam.dtmax;
 
 %%%%%畫斷面圖
 x=0:0.1:b;
