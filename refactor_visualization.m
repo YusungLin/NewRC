@@ -2,39 +2,52 @@ function visualParam = refactor_visualization(param, dtmax)
     % load parameters
     handles = param.handles;
     concretetype = param.concretetype;
+    
+    
+    
+    %%%%%畫斷面圖
+    scoordinate = sectionView(param, dtmax);
+
+%     betal=1.05-(0.05*(fc/70));
+%     if betal<0.65
+%         betal=0.65;
+%     end
+%     if betal>0.85
+%         betal=0.85;
+%     end
+
+    % MANDER Model
+    if concretetype==0||concretetype==1
+        mander = manderModel(param)
+        visualParam.mander = mander;
+    % HUNG Model
+    elseif concretetype==2
+        hungModel(param);
+    end
+    %%%%%%%%%%%%%%%% HUNG Model%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    steelModel(param)
+    
+    AXE=handles.axes2;
+    plot(AXE,0,0);
+    AXE.XTickLabel=string(AXE.XTick);
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    axes(handles.axes2)
+    plot(0,0,'r');
+    
+    visualParam.handles = handles;
+    visualParam.scoordinate = scoordinate;
+end
+
+function scoordinate = sectionView(param, dtmax)
+    handles = param.handles;
     h = param.h;
     b = param.b;
     s = param.s;
     number = param.number;
     mat = param.mat;
-    fc = param.mander.fc;
-    Ec = param.mander.Ec;
-    K = param.mander.K;
-    ecu = param.mander.ecu;
-    ft = param.mander.ft;
-    if concretetype == 2
-        SIGtc = param.hung.SIGtc;
-        SIGtp = param.hung.SIGtp;
-        EPSILONtc = param.hung.EPSILONtc;
-        EPSILONtp = param.hung.EPSILONtp;
-        EPSILONtu = param.hung.EPSILONtu;
-        SIGcp = param.hung.SIGcp;
-        SIGcu = param.hung.SIGcu;
-        EPSILONcp = param.hung.EPSILONcp;
-        EPSILONcu = param.hung.EPSILONcu;
-    end
-    stnum = param.stnum;
-    fy = param.fy;
-    fu = param.fu;
-    Es = param.Es;
-    esh = param.esh;
-    esu = param.esu;
-    power = param.power;
-    fcr = param.fcr;
     
-    
-    
-    %%%%%畫斷面圖
     x=0:0.1:b;
     y=0:0.1:h;
     axes(handles.axes1)
@@ -94,71 +107,105 @@ function visualParam = refactor_visualization(param, dtmax)
             p=p+1;
         end
     end
+end
 
-%     betal=1.05-(0.05*(fc/70));
-%     if betal<0.65
-%         betal=0.65;
-%     end
-%     if betal>0.85
-%         betal=0.85;
-%     end
+function mander = manderModel(param)
+    % unpack parameters
+    handles = param.handles;
+    fc = param.mander.fc;
+    Ec = param.mander.Ec;
+    K = param.mander.K;
+    ecu = param.mander.ecu;
+    ft = param.mander.ft;
 
-    %%%%%%%%%%%%%%%% MANDER Model %%%%%%%%%%%%%%%%%
-    if concretetype==0||concretetype==1
-        unfcc=fc;
-        if unfcc<=204
-            unecc=0.002;
-        elseif unfcc>204||unfcc<1020
-            unecc=0.002+0.001*(unfcc-204)/816;
-        else
-            unecc=0.003;
-        end
-        unEsec=unfcc/unecc;
-        unr=Ec/(Ec-unEsec);
-        fcc=K*fc;
-        ecc=unecc*(1+5*(K-1));
-        Esec=fcc/ecc;
-        r=Ec/(Ec-Esec);
-
-        v=1;u=1;
-        for xx=0:0.0001:ecu
-            confinedyy(u,v)= (r*(xx/ecc))/((r-1)+(xx/ecc).^r)*fcc;
-            v=v+1;
-        end
-        v=1;u=1;
-        for xx=0:0.0001:0.004
-            unconfinedyy(u,v)= (unr*(xx/unecc))/((unr-1)+(xx/unecc).^unr)*unfcc;
-            v=v+1;
-        end
-        unconfined=unconfinedyy(u,v-1);
-        axes(handles.axes2)
-        ectension=ft/Ec;
-        xx=0:0.0001:ecu;
-        plot(xx,confinedyy,'r');hold on;xtickformat('%.3f');
-        xx=0:0.0001:0.004;
-        plot(xx,unconfinedyy,'r');hold on;xtickformat('%.3f');
-        line([0.004,0.006],[unconfined,0],'Color','red');hold on;
-        line([0,-ectension],[0,-ft],'Color','blue');grid on;hold on;
+    unfcc=fc;
+    if unfcc<=204
+        unecc=0.002;
+    elseif unfcc>204||unfcc<1020
+        unecc=0.002+0.001*(unfcc-204)/816;
+    else
+        unecc=0.003;
     end
+    unEsec=unfcc/unecc;
+    unr=Ec/(Ec-unEsec);
+    fcc=K*fc;
+    ecc=unecc*(1+5*(K-1));
+    Esec=fcc/ecc;
+    r=Ec/(Ec-Esec);
 
-    %%%%%%%%%%%%%%%%%%%%% HUNG Model%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    if concretetype==2
-        v=1;u=1;
-        for xx=0:0.0001:EPSILONcp
-            HPFRCCyy(u,v)= SIGcp*(2*(xx/EPSILONcp)-(xx/EPSILONcp)^2);
-            v=v+1;
-        end
-        axes(handles.axes2)
-        line([0,EPSILONtc],[0,SIGtc],'Color','blue');grid on;hold on;
-        line([EPSILONtc,EPSILONtp],[SIGtc,SIGtp],'Color','blue');hold on;
-        line([EPSILONtp,EPSILONtu],[SIGtp,0],'Color','blue');hold on;
-        xx=0:0.0001:EPSILONcp;
-        plot(-xx,-HPFRCCyy,'r');hold on;xtickformat('%.3f');
-        line([-EPSILONcp,-EPSILONcu],[-SIGcp,-SIGcu],'Color','red');hold on;
-        line([-EPSILONcu,-0.1],[-SIGcu,-SIGcu],'Color','red');hold on;
+    v=1;u=1;
+    for xx=0:0.0001:ecu
+        confinedyy(u,v)= (r*(xx/ecc))/((r-1)+(xx/ecc).^r)*fcc;
+        v=v+1;
     end
-    %%%%%%%%%%%%%%%% HUNG Model%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    v=1;u=1;
+    for xx=0:0.0001:0.004
+        unconfinedyy(u,v)= (unr*(xx/unecc))/((unr-1)+(xx/unecc).^unr)*unfcc;
+        v=v+1;
+    end
+    unconfined=unconfinedyy(u,v-1);
+    axes(handles.axes2)
+    ectension=ft/Ec;
+    xx=0:0.0001:ecu;
+    plot(xx,confinedyy,'r');hold on;xtickformat('%.3f');
+    xx=0:0.0001:0.004;
+    plot(xx,unconfinedyy,'r');hold on;xtickformat('%.3f');
+    line([0.004,0.006],[unconfined,0],'Color','red');hold on;
+    line([0,-ectension],[0,-ft],'Color','blue');grid on;hold on;
 
+    mander.unr = unr;
+    mander.unecc = unecc;
+    mander.unfcc = unfcc;
+    mander.r = r;
+    mander.ecc = ecc;
+    mander.fcc = fcc;
+    mander.ectension = ectension;
+    mander.unconfined = unconfined;
+end
+
+function hungModel(param)
+    % unpack parameters
+    SIGtc = param.hung.SIGtc;
+    SIGtp = param.hung.SIGtp;
+    EPSILONtc = param.hung.EPSILONtc;
+    EPSILONtp = param.hung.EPSILONtp;
+    EPSILONtu = param.hung.EPSILONtu;
+    SIGcp = param.hung.SIGcp;
+    SIGcu = param.hung.SIGcu;
+    EPSILONcp = param.hung.EPSILONcp;
+    EPSILONcu = param.hung.EPSILONcu;
+    
+%     v=1;u=1;
+%     for xx=0:0.0001:EPSILONcp
+%         HPFRCCyy(u,v)= SIGcp*(2*(xx/EPSILONcp)-(xx/EPSILONcp)^2);
+%         v=v+1;
+%     end
+    x = 0:0.0001:EPSILONcp;
+    HPFRCCyy = SIGcp * (2 * (x / EPSILONcp) - (x / EPSILONcp) ^ 2);
+    
+    axes(handles.axes2)
+    grid on;
+    plot(-xx,-HPFRCCyy,'r');hold on;xtickformat('%.3f');
+    
+    line([0,EPSILONtc],[0,SIGtc],'Color','blue');
+    line([EPSILONtc,EPSILONtp],[SIGtc,SIGtp],'Color','blue');
+    line([EPSILONtp,EPSILONtu],[SIGtp,0],'Color','blue');
+    line([-EPSILONcp,-EPSILONcu],[-SIGcp,-SIGcu],'Color','red');
+    line([-EPSILONcu,-0.1],[-SIGcu,-SIGcu],'Color','red');
+end
+
+function steelModel(param)
+    % unpack parameters
+    handles = param.handles;
+    stnum = param.stnum;
+    fy = param.fy;
+    fu = param.fu;
+    Es = param.Es;
+    esh = param.esh;
+    esu = param.esu;
+    power = param.power;
+    fcr = param.fcr;
+    
     for num=1:1:stnum
         steely=[];
         axes(handles.axes3)
@@ -206,26 +253,4 @@ function visualParam = refactor_visualization(param, dtmax)
         plot(AXES,0,0,'r');
         AXES.YTickLabel = string(AXES.YTick);
     end
-    AXE=handles.axes2;
-    plot(AXE,0,0);
-    AXE.XTickLabel=string(AXE.XTick);
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    axes(handles.axes2)
-    plot(0,0,'r');
-    
-    
-    
-    mander.unr = unr;
-    mander.unecc = unecc;
-    mander.unfcc = unfcc;
-    mander.r = r;
-    mander.ecc = ecc;
-    mander.fcc = fcc;
-    mander.ectension = ectension;
-    mander.unconfined = unconfined;
-    visualParam.handles = handles;
-    visualParam.mander = mander;
-    visualParam.scoordinate = scoordinate;
 end
