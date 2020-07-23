@@ -173,21 +173,18 @@ function pushbutton1_Callback(hObject, eventdata, handles)
     % unpack parameters in steel_conversion
     handles = steelParam.handles;
     param.handles = handles;
-    
     ssAs = steelParam.ssAs;
     steelnum = steelParam.steelnum;
     totalAs = steelParam.totalAs;
     dtmax = steelParam.dtmax;
     
-% start extraction
     visualParam = refactor_visualization(param, dtmax);
-
+    
     % 讀取 visualization 的參數
     % unpack parameters in visualization
     scoordinate = visualParam.scoordinate;
     handles = visualParam.handles;
     param.handles = handles;
-    
     if concretetype == 0 || concretetype == 1
         unr = visualParam.mander.unr;
         unecc = visualParam.mander.unecc;
@@ -199,34 +196,36 @@ function pushbutton1_Callback(hObject, eventdata, handles)
         unconfined = visualParam.mander.unconfined;
     end
 
-% end extraction
+%     p=1;
+%     for e=1:1:200%%%
+%         for g=1:1:200%%%
+%             cxy(:,p)=[(b/200)/2+(b/200)*(g-1) (h/200)/2+(h/200)*(e-1)]; %%%
+%             p=p+1;
+%         end
+%     end
+%   DM: `x = 1:5; y = 10:10:50; cxy = [reshape(repmat(x, 1, 5), 1, []); reshape(repmat(y, 5, 1), 1, [])]`
+    x = 1:200;
+    cx = (b / 200) / 2 + (b / 200) * (x - 1);
+    cy = (h / 200) / 2 + (h / 200) * (x - 1);
+    cxy = [reshape(repmat(cx, 1, 200), 1, []); reshape(repmat(cy, 200, 1), 1, [])];
 
-p=1;
-for e=1:1:200%%%
-    for g=1:1:200%%%
-        cxy(:,p)=[(b/200)/2+(b/200)*(g-1) (h/200)/2+(h/200)*(e-1)]; %%%
-        p=p+1;
-    end
-end
-
-theta=0;
-srotation=[cosd(theta) -sind(theta);sind(theta) cosd(theta)]*[scoordinate];
-crotation=[cosd(theta) -sind(theta);sind(theta) cosd(theta)]*[cxy];
-dtmax=1;
-for K=1:1:steelnum
-    if srotation(2,K)>dtmax
-        dtmax=srotation(2,K);
-        dtnum=K;
-    end
-end
-handles.myData1= s;
-guidata(hObject, handles);
-handles.myData2= ss;
-guidata(hObject, handles);
-handles.myData3= ssrow;
-guidata(hObject, handles);
-handles.myData4= sstyp;
-guidata(hObject, handles);
+    theta=0;
+    srotation=[cosd(theta) -sind(theta);sind(theta) cosd(theta)]*[scoordinate];
+    crotation=[cosd(theta) -sind(theta);sind(theta) cosd(theta)]*[cxy];
+%     dtmax=1;
+%     for K=1:1:steelnum
+%         if srotation(2,K)>dtmax
+%             dtmax=srotation(2,K);
+%             dtnum=K;
+%         end
+%     end
+    [dtmax, dtnum] = max(srotation(2, :));
+    
+    handles.myData1= s;
+    handles.myData2= ss;
+    handles.myData3= ssrow;
+    handles.myData4= sstyp;
+    guidata(hObject, handles);
 
 
 path=strcat(pathname,'Mocur_',filename);
