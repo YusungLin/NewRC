@@ -197,7 +197,8 @@ function hungModel(param)
     
     axes(handles.axes2)
     grid on;
-    plot(-xx,-HPFRCCyy,'r');hold on;xtickformat('%.3f');
+    plot(-xx,-HPFRCCyy,'r');
+    xtickformat('%.3f');
     
     line([0,EPSILONtc],[0,SIGtc],'Color','blue');
     line([EPSILONtc,EPSILONtp],[SIGtc,SIGtp],'Color','blue');
