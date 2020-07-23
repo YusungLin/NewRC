@@ -237,28 +237,38 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-s=handles.myData1;
-ss=handles.myData2;
-ssrow=handles.myData3;
-sstyp=handles.myData4;
 
-handles.legend_list = [];
-guidata(hObject, handles);
-axes(handles.axes1);
-cla reset
-axes(handles.axes2);
-cla reset
-axes(handles.axes3);
-cla reset
-axes(handles.axes4);
+%     s=handles.myData1;
+%     ss=handles.myData2;
+%     ssrow=handles.myData3;
+%     sstyp=handles.myData4;
 
-cla reset
-s=0;ss=0;ssrow=0;sstyp=0;
-handles.text4.String='';handles.text6.String='';
-handles.text16.String='';handles.text17.String='';handles.text18.String='';
-handles.text19.String='';handles.text20.String='';handles.text21.String='';
-handles.text23.String='';handles.text24.String='';handles.text25.String='';
-handles.text30.String='';handles.text31.String='';handles.text32.String='';
+    handles.legend_list = [];
+    guidata(hObject, handles);
+    axes(handles.axes1);
+    cla reset
+    axes(handles.axes2);
+    cla reset
+    axes(handles.axes3);
+    cla reset
+    axes(handles.axes4);
+    cla reset
+    
+%     s=0;ss=0;ssrow=0;sstyp=0;
+    handles.text4.String = '';
+    handles.text6.String = '';
+    handles.text16.String = '';
+    handles.text17.String = '';
+    handles.text18.String = '';
+    handles.text19.String = '';
+    handles.text20.String = '';
+    handles.text21.String = '';
+    handles.text23.String = '';
+    handles.text24.String = '';
+    handles.text25.String = '';
+    handles.text30.String = '';
+    handles.text31.String = '';
+    handles.text32.String = '';
 
-createAxes(handles);
+    createAxes(handles);
 end
