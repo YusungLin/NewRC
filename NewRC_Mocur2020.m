@@ -117,7 +117,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 
 	param = refactor_read_data(handles);
     
-    % Åª¨ú°Ñ¼Æ
+    % Åªï¿½ï¿½ï¿½Ñ¼ï¿½
     % unpack all the parameters (temparary)
     handles = param.handles;
     
@@ -169,7 +169,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
     
     steelParam = refactor_steel_conversion(param);
     
-    % Åª¨ú steel_conversion ªº°Ñ¼Æ
+    % Åªï¿½ï¿½ steel_conversion ï¿½ï¿½ï¿½Ñ¼ï¿½
     % unpack parameters in steel_conversion
     handles = steelParam.handles;
     param.handles = handles;
@@ -180,7 +180,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
     
     visualParam = refactor_visualization(param, dtmax);
     
-    % Åª¨ú visualization ªº°Ñ¼Æ
+    % Åªï¿½ï¿½ visualization ï¿½ï¿½ï¿½Ñ¼ï¿½
     % unpack parameters in visualization
     scoordinate = visualParam.scoordinate;
     handles = visualParam.handles;
