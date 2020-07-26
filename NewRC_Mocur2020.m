@@ -117,7 +117,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 
 	param = refactor_read_data(handles);
     
-    % Ū���Ѽ�
+    % 讀取參數
     % unpack all the parameters (temparary)
     handles = param.handles;
     
@@ -169,7 +169,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
     
     steelParam = refactor_steel_conversion(param);
     
-    % Ū�� steel_conversion ���Ѽ�
+    % 讀取 steel_conversion 的參數
     % unpack parameters in steel_conversion
     handles = steelParam.handles;
     param.handles = handles;
@@ -180,7 +180,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
     
     visualParam = refactor_visualization(param, dtmax);
     
-    % Ū�� visualization ���Ѽ�
+    % 讀取 visualization 的參數
     % unpack parameters in visualization
     scoordinate = visualParam.scoordinate;
     handles = visualParam.handles;
