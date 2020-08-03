@@ -186,6 +186,8 @@ function [Mxx, Myy, c, fsmax, fsmin] = refactor_data_preprocess(param, steelPara
             if concretetype == 0 || concretetype == 1
                 if epsilonc(m) < 0 && epsilonc(m) > -ecu
                     eachfc(m) = -(r * (-epsilonc(m) / ecc)) / ((r - 1) + (-epsilonc(m) / ecc) .^ r) * fcc;
+                else
+                    eachfc(m) = 0;
                 end
             elseif concretetype == 2
                 if epsilonc(m) >= -EPSILONcp && epsilonc(m) < 0                 % 受壓混凝土
