@@ -280,9 +280,9 @@ function dataValidation(h, s)
     if sum(s(:, 2) > 10000 | s(:, 2) < 1000) > 0
         promptError('fy 輸入錯誤');
     end
-    if sum(s(:, 3:end) >= 19 | s(:, 3:end) < 0 | ...
+    if sum(sum(s(:, 3:end) >= 19 | s(:, 3:end) < 0 | ...
             s(:, 3:end) == 1 | s(:, 3:end) == 2 | s(:, 3:end) == 13 | s(:, 3:end) == 15 | s(:, 3:end) == 17 | ...
-            rem(s(:, 3:end), 1) ~= 0) > 0  % re ~= 0 代表輸入非整數 means non-integer
+            rem(s(:, 3:end), 1) ~= 0)) > 0  % re ~= 0 代表輸入非整數 means non-integer
         promptError('鋼筋號數輸入錯誤');
     end
 end
