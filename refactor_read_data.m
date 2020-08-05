@@ -98,6 +98,7 @@ function param = refactor_read_data(handles)
 %     ssrow(find(ssrow==0))=[];
 %     sstyp(find(sstyp==0))=[];
     for i = 1:mat(1)
+        % find the index of the specific type and assign to the sstyp
         sstyp(i, 1:(mat(2) - 2)) = find(fy == s(i, 2));
     end
     sstyp(ss == 0) = 0;
